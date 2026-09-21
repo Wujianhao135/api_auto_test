@@ -1,0 +1,12 @@
+{
+  "login_success": {
+    "email": "eve.holt@reqres.in",
+    "password": "cityslicka",
+    "expected_code": 200
+  },
+  "login_fail": {
+    "email": "eve.holt@reqres.in",
+    "password": "wrongpassword",
+    "expected_code": 400
+  }
+}
