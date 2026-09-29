@@ -1,30 +1,24 @@
 import pytest
+import os
+import yaml
+from common.assertions import assert_response
 
+
+# 读取用户测试数据
+data_path = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    "data", "user_data.yaml"
+)
+with open(data_path, encoding="utf-8") as f:
+    user_data = yaml.safe_load(f)
 
 # ========== 创建用户 ==========
-@pytest.mark.parametrize("name, job, expected_code", [
-    ("morpheus", "leader", 201),
-    ("neo", "developer", 201),
-    ("trinity", "engineer", 201),
-])
-def test_create_user(api_client, name, job, expected_code):
-    """
-    创建用户测试
-    :param api_client: conftest 里的 fixture
-    :param name: 用户名
-    :param job: 职业
-    :param expected_code: 预期状态码
-    """
-    payload = {"name": name, "job": job}
-    resp = api_client.post("/users", json=payload)
+@pytest.mark.parametrize("case",user_data["create_user"],ids=lambda x:x["title"])
+def test_create_user(api_client, case):
 
-    assert resp is not None
-    assert resp.status_code == expected_code
+    resp = api_client.post("/users", json=case["payload"])
 
-    result = resp.json()
-    assert result["name"] == name
-    assert result["job"] == job
-    assert "id" in result
+    assert_response(resp, case["expected_code"], case["expected_fields"])
 
 
 # ========== 查用户列表 ==========
@@ -32,10 +26,7 @@ def test_get_user_list(api_client):
     """查用户列表"""
     resp = api_client.get("/users?page=1")
 
-    assert resp.status_code == 200
-    result = resp.json()
-    assert "data" in result
-    assert len(result["data"]) > 0
+    assert_response(resp, 200, ["data"])
 
 
 # ========== 查单个用户 ==========
@@ -47,7 +38,7 @@ def test_get_user_detail(api_client, user_id, expected_code):
     """查单个用户详情"""
     resp = api_client.get(f"/users/{user_id}")
 
-    assert resp.status_code == expected_code
+    assert_response(resp, expected_code)
 
     if expected_code == 200:
         result = resp.json()
@@ -64,4 +55,4 @@ def test_delete_user(api_client):
 
     # 第二步：删除这个用户
     delete_resp = api_client.delete(f"/users/{user_id}")
-    assert delete_resp.status_code == 204
+    assert_response(delete_resp, 204)

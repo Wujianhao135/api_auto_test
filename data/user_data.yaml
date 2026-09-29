@@ -1,0 +1,24 @@
+# data/user_data.yaml
+# 用户接口测试数据
+
+create_user:
+  - title: "正常创建用户-morpheus"
+    payload:
+      name: "morpheus"
+      job: "leader"
+    expected_code: 201
+    expected_fields: ["id", "name", "job", "createdAt"]
+
+  - title: "正常创建用户-neo"
+    payload:
+      name: "neo"
+      job: "developer"
+    expected_code: 201
+    expected_fields: ["id", "name", "job", "createdAt"]
+
+  - title: "正常创建用户-trinity"
+    payload:
+      name: "trinity"
+      job: "engineer"
+    expected_code: 201
+    expected_fields: ["id", "name", "job", "createdAt"]

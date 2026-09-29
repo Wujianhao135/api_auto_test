@@ -1,0 +1,30 @@
+# data/login_data.yaml
+# 登录接口测试数据
+
+login:
+  - title: "正常登录"
+    payload:
+      email: "eve.holt@reqres.in"
+      password: "cityslicka"
+    expected_code: 200
+    expected_field: "token"
+
+  - title: "空邮箱"
+    payload:
+      email: ""
+      password: "cityslicka"
+    expected_code: 400
+    expected_field: "error"
+
+  - title: "空密码"
+    payload:
+      email: "eve.holt@reqres.in"
+      password: ""
+    expected_code: 400
+    expected_field: "error"
+
+  - title: "缺少密码字段"
+    payload:
+      email: "eve.holt@reqres.in"
+    expected_code: 400
+    expected_field: "error"

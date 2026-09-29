@@ -1,4 +1,5 @@
 import logging
+import time
 
 import requests
 import yaml
@@ -17,6 +18,7 @@ class ApiClient:
 
         self.base_url = config.get("base_url", "").rstrip("/")
         self.timeout = config.get("timeout", 10)
+        self.delay = 1.0  # 每次请求间隔1秒，避免触发限流
 
         # 创建 Session，自动保持会话（Cookie）
         self.session = requests.Session()
@@ -44,6 +46,7 @@ class ApiClient:
         """
         url = self.base_url + path
         self.logger.info(f"GET 请求: {url}")
+        time.sleep(self.delay)
 
         try:
             resp = self.session.get(
@@ -75,6 +78,7 @@ class ApiClient:
         url = self.base_url + path
         self.logger.info(f"POST 请求: {url}")
         self.logger.info(f"POST 请求体: {json}")
+        time.sleep(self.delay)
 
         try:
             resp = self.session.post(
@@ -99,6 +103,7 @@ class ApiClient:
         """发 DELETE 请求"""
         url = self.base_url + path
         self.logger.info(f"DELETE 请求: {url}")
+        time.sleep(self.delay)
 
         try:
             resp = self.session.delete(
