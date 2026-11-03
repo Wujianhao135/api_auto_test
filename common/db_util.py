@@ -118,11 +118,17 @@ class DBUtil:
         return deleted
 
     def cleanup_ruoyi_test_users(self) -> int:
-        """清理若依库 sys_user 表里的 auto_test_ 测试用户（ry-vue 库）"""
-        deleted = self.execute(
-            "DELETE FROM sys_user WHERE user_name LIKE %s",
-            (TEST_PREFIX + "%",),
-            database="ry-vue",
-        )
-        self.logger.info(f"清理若依测试用户: {deleted} 条")
-        return deleted
+        """清理若依库 sys_user 表里的 auto_test_ 测试用户（ry-vue 库）。
+        如果 ry-vue 库不存在（如 CI 环境），静默跳过，不报错。"""
+        try:
+            deleted = self.execute(
+                "DELETE FROM sys_user WHERE user_name LIKE %s",
+                (TEST_PREFIX + "%",),
+                database="ry-vue",
+            )
+            self.logger.info(f"清理若依测试用户: {deleted} 条")
+            return deleted
+        except Exception as e:
+            # CI 环境没有 ry-vue 库，跳过即可
+            self.logger.warning(f"ry-vue 库不存在或清理失败，跳过: {e}")
+            return 0
