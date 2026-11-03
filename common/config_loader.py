@@ -44,6 +44,7 @@ _ENV_OVERRIDES = {
     "SHOP_BASE_URL": ("shop", "base_url"),
     "SHOP_USERNAME": ("shop", "username"),
     "SHOP_PASSWORD": ("shop", "password"),
+    "SHOP_PAY_SECRET": ("shop", "pay_secret"),  # 支付验签密钥，须与 shop_service 环境变量一致
     "MYSQL_HOST": ("mysql", "host"),
     "MYSQL_PORT": ("mysql", "port"),
     "MYSQL_USER": ("mysql", "user"),
