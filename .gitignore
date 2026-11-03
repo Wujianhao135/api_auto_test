@@ -18,3 +18,6 @@ reports/
 # IDE
 .idea/
 .vscode/
+
+# 本地真实配置（含密码，不提交）
+config/config.yaml

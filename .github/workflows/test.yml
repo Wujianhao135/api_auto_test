@@ -1,0 +1,77 @@
+# 接口自动化测试 CI：push 到 main 或每天定时跑
+name: API 自动化测试
+
+on:
+  push:
+    branches: [main, master]
+  schedule:
+    # 每天早上 8:00（UTC+8 = UTC 0:00）跑一次
+    - cron: "0 0 * * *"
+  workflow_dispatch:  # 支持手动触发
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: hsp
+          MYSQL_DATABASE: shop
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      TEST_ENV: ci
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 初始化 shop 数据库
+        run: |
+          # 等 MySQL 就绪
+          sleep 15
+          mysql -h 127.0.0.1 -u root -phsp shop < sql/shop.sql
+
+      - name: 启动电商服务
+        run: |
+          nohup python -m uvicorn shop_service.main:app --host 127.0.0.1 --port 8000 &
+          sleep 5
+          curl -s http://127.0.0.1:8000/health || echo "服务未就绪"
+
+      - name: 跑测试（跳过若依用例）
+        run: |
+          python -m pytest tests/ -m "not ruoyi" --alluredir reports/allure-results --clean-alluredir -v
+
+      - name: 上传 Allure 报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: reports/allure-results
+          retention-days: 14

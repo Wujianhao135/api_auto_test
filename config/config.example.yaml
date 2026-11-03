@@ -1,0 +1,64 @@
+# ============================================================
+# 接口自动化测试 - 配置模板
+# 复制本文件为 config.yaml，填入本地真实配置
+# 敏感字段也支持环境变量覆盖（见 common/config_loader.py）
+# ============================================================
+
+env: dev
+
+common:
+  timeout: 10
+  log_level: INFO
+  log_dir: reports/logs
+  log_retention_days: 30
+
+environments:
+  dev:
+    ruoyi:
+      base_url: http://localhost:8080
+      username: admin
+      password: admin123
+    shop:
+      base_url: http://localhost:8000
+      username: admin
+      password: admin123
+      pay_secret: your-pay-secret-here
+    mysql:
+      host: localhost
+      port: 3306
+      user: root
+      password: your-mysql-password
+      ruoyi_db: ry-vue
+      shop_db: shop
+      charset: utf8mb4
+    redis:
+      host: localhost
+      port: 6379
+      db: 0
+      password: null
+      protocol: 2
+
+  ci:
+    ruoyi:
+      base_url: http://127.0.0.1:8080
+      username: admin
+      password: admin123
+    shop:
+      base_url: http://127.0.0.1:8000
+      username: admin
+      password: admin123
+      pay_secret: null
+    mysql:
+      host: 127.0.0.1
+      port: 3306
+      user: root
+      password: null
+      ruoyi_db: ry-vue
+      shop_db: shop
+      charset: utf8mb4
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      db: 0
+      password: null
+      protocol: 2
