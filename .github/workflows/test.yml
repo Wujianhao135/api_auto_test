@@ -62,6 +62,12 @@ jobs:
           # 等 MySQL 就绪
           sleep 15
           mysql -h 127.0.0.1 -u root -phsp shop < sql/shop.sql
+          # 插入初始测试用户（bcrypt 哈希）
+          mysql -h 127.0.0.1 -u root -phsp shop -e "
+            INSERT INTO shop_user (username, password, nickname, status) VALUES
+              ('admin', '\$2b\$12\$PQLZ0TgaVL/B1ZlO8U8b1uar5/zRlO9jNnV5W57lBv5bpab0TOzae', '管理员', 1),
+              ('testuser', '\$2b\$12\$qx7pOhsjUle1xmocaJR1x.wMbG0iA560TEfufNXII5FUJSlsX5c1a', '测试用户', 1);
+          "
 
       - name: 启动电商服务
         run: |
