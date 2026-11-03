@@ -11,6 +11,7 @@ def test_config_loaded(config):
 
 
 @pytest.mark.smoke
+@pytest.mark.ruoyi
 def test_ruoyi_public_api(ruoyi_client):
     """未登录客户端能访问若依公开接口"""
     resp = ruoyi_client.get("/captchaImage")
@@ -18,6 +19,7 @@ def test_ruoyi_public_api(ruoyi_client):
 
 
 @pytest.mark.smoke
+@pytest.mark.ruoyi
 def test_ruoyi_logged(ruoyi_logged):
     """已登录若依客户端能访问受保护接口"""
     resp = ruoyi_logged.get("/getInfo")
