@@ -38,6 +38,8 @@ jobs:
 
     env:
       TEST_ENV: ci
+      MYSQL_PASSWORD: hsp
+      SHOP_PAY_SECRET: pay-secret-2026
 
     steps:
       - uses: actions/checkout@v4
@@ -51,6 +53,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
+      - name: 生成配置文件
+        run: cp config/config.example.yaml config/config.yaml
 
       - name: 初始化 shop 数据库
         run: |
